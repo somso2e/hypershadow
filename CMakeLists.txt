@@ -3,7 +3,6 @@ project(HyperShadow)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
-# Find the Qt5 package
 
 find_package(
   VTK
@@ -18,12 +17,14 @@ find_package(
              RenderingCore
              RenderingOpenGL2
              RenderingVolume
+             RenderingAnnotation
              RenderingVolumeOpenGL2)
 if(NOT VTK_FOUND)
   message("${VTK_NOT_FOUND_MESSAGE}")
   return()
 endif()
 
+# Find the Qt5 package
 find_package("Qt${VTK_QT_VERSION}" REQUIRED COMPONENTS Widgets)
 
 if(NOT TARGET "Qt${VTK_QT_VERSION}::Widgets")
