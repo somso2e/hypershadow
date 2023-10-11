@@ -39,6 +39,7 @@ MainWindow::MainWindow(int argc, char *argv[]) {
     // orientationWidget->SetEnabled(true);
     // orientationWidget->InteractiveOff();
     // orientationWidget->On();
+    this->connectSignals();
 
     this->Renderer->ResetCamera();
     this->RenderWidget->show();
@@ -188,6 +189,7 @@ void MainWindow::setupUI() {
     centralWidget->setLayout(mainLayout);
     this->setCentralWidget(centralWidget);
 }
+
 void MainWindow::setDefaultValues() {
     double l[4] = {10.0, 10.0, 5.0, 5.0};
     this->HyperCubeActor->SetLightOrigin(l);
@@ -290,13 +292,14 @@ void MainWindow::updateCube() {
     if (this->SuppressUpdate) {
         return;
     }
-    if (this->HyperCubeActor->UpdatePositions()) {
+    bool success = this->HyperCubeActor->UpdatePositions();
+    if (success) {
         this->NoticeLabel->setText("");
     } else {
         this->NoticeLabel->setText(
-            "No shadow can be cased from one of the points of the Hypercube on "
-            "the Hyperplane. Try changing the Light origin or the Hyperplane "
-            "origin and normal.");
+            "No shadow can be casted from one of the points of the Hypercube "
+            "on the Hyperplane. Try changing the Light origin or the "
+            "Hyperplane origin and normal.");
     }
 
     this->updateTables();
