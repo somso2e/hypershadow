@@ -41,7 +41,10 @@ MainWindow::MainWindow(int argc, char *argv[]) {
     // orientationWidget->On();
     this->connectSignals();
 
+    this->Renderer->GetActiveCamera()->Pitch(45);
+    this->Renderer->GetActiveCamera()->Yaw(45);
     this->Renderer->ResetCamera();
+    // this->Renderer->GetActiveCamera()->Elevation(-45);
     this->RenderWidget->show();
     this->show();
 }
@@ -191,7 +194,7 @@ void MainWindow::setupUI() {
 }
 
 void MainWindow::setDefaultValues() {
-    double l[4] = {10.0, 10.0, 5.0, 5.0};
+    double l[4] = {0.0, 0.0, 1.5, 1.0};
     this->HyperCubeActor->SetLightOrigin(l);
     this->LightOriginSpinBoxX->setValue(l[0]);
     this->LightOriginSpinBoxY->setValue(l[1]);
@@ -205,7 +208,7 @@ void MainWindow::setDefaultValues() {
     this->PlaneOriginSpinBoxZ->setValue(o[2]);
     this->PlaneOriginSpinBoxW->setValue(o[3]);
 
-    double n[4] = {0.0, 0.0, 1.0, 1.0};
+    double n[4] = {0.0, 0.0, 1.0, 0.0};
     this->HyperCubeActor->GetHyperPlane()->SetNormal(n);
     this->PlaneNormalSpinBoxX->setValue(n[0]);
     this->PlaneNormalSpinBoxY->setValue(n[1]);

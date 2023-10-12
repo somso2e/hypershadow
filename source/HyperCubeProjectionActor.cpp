@@ -60,6 +60,8 @@ vtkHyperCubeProjectionActor::vtkHyperCubeProjectionActor() {
     this->LineActor->SetMapper(this->LineMapper);
 
     this->LineProperty = vtkProperty::New();
+    this->LineProperty->SetLineWidth(5);
+    this->LineProperty->RenderLinesAsTubesOn();
     this->LineActor->SetProperty(this->LineProperty);
 
     this->AddPart(this->LineActor);
@@ -168,15 +170,17 @@ bool vtkHyperCubeProjectionActor::UpdatePositions() {
 
     for (int i = 0; i < 16; i++) {
         auto p = this->HyperCube->GetPoints()->GetPoint(i);
-        double d[4];
-        d[0] = this->LightOrigin[0] - p[0];
-        d[1] = this->LightOrigin[1] - p[1];
-        d[2] = this->LightOrigin[2] - p[2];
-        d[3] = this->LightOrigin[3] - p[3];
-        auto dotProduct = vtkMath::Dot(normal, d);
+        double rotated[4];
+        this->Transform4D->MultiplyPoint(p, rotated);
+        double ray[4];
+        ray[0] = this->LightOrigin[0] - rotated[0];
+        ray[1] = this->LightOrigin[1] - rotated[1];
+        ray[2] = this->LightOrigin[2] - rotated[2];
+        ray[3] = this->LightOrigin[3] - rotated[3];
+        auto dotProduct = vtkMath::Dot(normal, ray);
         if (abs(dotProduct) < 1e-6) {
-            vtkErrorMacro(
-                << "Cannot cast shadow to the plane from one of the points.");
+            vtkErrorMacro(<< "Cannot cast shadow from one of the points of "
+                             "hypercube to the hyperplane.");
             return false;
         }
         double ol[4];
@@ -186,15 +190,11 @@ bool vtkHyperCubeProjectionActor::UpdatePositions() {
         ol[3] = origin[3] - this->LightOrigin[3];
 
         double t = vtkMath::Dot(normal, ol) / dotProduct;
-        double point4D[4];
-        point4D[0] = this->LightOrigin[0] + d[0] * t;
-        point4D[1] = this->LightOrigin[1] + d[1] * t;
-        point4D[2] = this->LightOrigin[2] + d[2] * t;
-        point4D[3] = this->LightOrigin[3] + d[3] * t;
         double final[4];
-        this->Transform4D->MultiplyPoint(point4D, final);
-        // drop the z axis and keep x,y,w
-        final[2] = final[3];
+        final[0] = this->LightOrigin[0] + ray[0] * t;
+        final[1] = this->LightOrigin[1] + ray[1] * t;
+        // point4D[2] = this->LightOrigin[2] + ray[2] * t;
+        final[2] = this->LightOrigin[3] + ray[3] * t;
         newPts->InsertNextPoint(final);
     }
 

@@ -7,6 +7,7 @@
 #include "vtkRenderer.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkSmartPointer.h"
+#include "vtkCamera.h"
 
 #include <QCheckBox>
 #include <QCloseEvent>
@@ -47,6 +48,7 @@ public:
 
         this->Slider = new QSlider(Qt::Horizontal, this);
         this->Slider->setSingleStep(1);
+        this->Slider->setPageStep(1);
         this->Slider->setRange(-180, 180);
         this->Slider->setValue(0);
 
